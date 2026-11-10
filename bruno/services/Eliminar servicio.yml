@@ -1,0 +1,16 @@
+info:
+  name: Eliminar servicio
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: http://localhost:3000/api/servicios/6af35ef60576cf6a39aed769
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

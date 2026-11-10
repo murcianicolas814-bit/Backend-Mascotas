@@ -1,4 +1,4 @@
-import ProductModel from "../models/product.model.js";
+import ProductModel from "../models/producto.model.js";
 
 const dbCreateProduct = async ( newProduct ) => {
     return await ProductModel.create( newProduct );  // Registrar en la BD

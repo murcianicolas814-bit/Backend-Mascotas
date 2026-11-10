@@ -1,4 +1,4 @@
-import { dbCreateProduct, dbDeleteProduct, dbGetProducts, dbGetProduct, dbUpdateProduct } from "../services/products.services.js";
+import { dbCreateProduct, dbDeleteProduct, dbGetProducts, dbGetProduct, dbUpdateProduct } from "../services/productos.services.js";
 
 const createProduct = async ( req, res ) => {
     try {

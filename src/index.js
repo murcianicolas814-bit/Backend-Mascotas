@@ -3,9 +3,10 @@ import express from 'express';           // ESModule
 
 import conexion from './config/mongo.config.js';  // Conexion a la base de datos
 
-import usersRoute from './routes/users.routes.js';
-import categoriesRoute from './routes/categories.routes.js';
-import productsRoute from './routes/products.routes.js';
+import usuariosRuta from './routes/usuarios.routes.js';
+import categoriasRuta from './routes/categorias.routes.js';
+import productosRuta from './routes/productos.routes.js';
+import serviciosRuta from './routes/servicios.routes.js';
 import authRoute from './routes/auth.routes.js';
 
 const port = process.env.PORT || 3001;
@@ -23,9 +24,10 @@ app.get('/health', (req, res) => {
 });
 
 // Enlazar todas las rutas de la aplicacion
-app.use( '/api/users', usersRoute );
-app.use( '/api/categories', categoriesRoute );
-app.use( '/api/products', productsRoute );
+app.use( '/api/usuarios', usuariosRuta );
+app.use( '/api/categorias', categoriasRuta );
+app.use( '/api/productos', productosRuta );
+app.use( '/api/servicios', serviciosRuta)
 app.use( '/api/auth', authRoute );
 
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProduct, deleteProduct, getProducts, getProduct, updateProduct } from "../controllers/products.controllers.js";
+import { createProduct, deleteProduct, getProducts, getProduct, updateProduct } from "../controllers/productos.controllers.js";
 import { authMiddleware } from "../middlewares/authenticate.middleware.js";
 import { authorizationMiddleware } from '../middlewares/authorization.middleware.js';
 

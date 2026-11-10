@@ -76,7 +76,7 @@ const UserSchema = new Schema(
 
 // Parte 2: Definir el modelo atado a la colección
 const UserModel = model(
-    'user',             // Nombre de la colección (pluraliza a 'users')
+    'usuarios',             // Nombre de la colección (pluraliza a 'users')
     UserSchema          // Esquema asociado
 );
 

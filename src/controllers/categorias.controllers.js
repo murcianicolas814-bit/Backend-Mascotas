@@ -1,4 +1,4 @@
-import { dbCreateCategory, dbDeleteCategory, dbGetCategories, dbGetCategory, dbUpdateCategory } from "../services/categories.services.js";
+import { dbCreateCategory, dbDeleteCategory, dbGetCategories, dbGetCategory, dbUpdateCategory } from "../services/categorias.services.js";
 
 const createCategory = async ( req, res ) => {
     try {

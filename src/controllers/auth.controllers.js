@@ -1,6 +1,6 @@
 import { verifyPassword } from "../helpers/bcrypt.helpers.js";
 import { generateToken } from "../helpers/jwt.helpers.js";
-import { dbGetUserByEmail } from "../services/users.services.js";
+import { dbGetUserByEmail } from "../services/usuarios.services.js";
 
 const loginUser = async ( req, res ) => {
 

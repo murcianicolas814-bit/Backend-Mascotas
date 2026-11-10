@@ -1,4 +1,4 @@
-import CategoryModel from "../models/category.model.js"
+import CategoryModel from "../models/categoria.model.js"
 
 const dbCreateCategory = async ( newCategory ) => {
     return await CategoryModel.create( newCategory );  // Registrar en la BD

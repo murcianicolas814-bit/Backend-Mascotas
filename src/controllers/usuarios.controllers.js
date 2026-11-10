@@ -1,4 +1,4 @@
-import { dbCreateUser, dbDeleteUser, dbGetUsers, dbGetUser, dbUpdateUser } from "../services/users.services.js";
+import { dbCreateUser, dbDeleteUser, dbGetUsers, dbGetUser, dbUpdateUser } from "../services/usuarios.services.js";
 import handleMongooseError from "../helpers/handle-mongoose-error.helper.js";
 import { generatePassword } from "../helpers/bcrypt.helpers.js";
 

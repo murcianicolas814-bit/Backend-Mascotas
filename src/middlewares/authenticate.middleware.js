@@ -1,5 +1,5 @@
 import { generateToken, validateToken } from "../helpers/jwt.helpers.js";
-import { dbGetUserByEmail } from "../services/users.services.js";
+import { dbGetUserByEmail } from "../services/usuarios.services.js";
 
 const authMiddleware = async ( req, res, next ) => {
     // Paso 1: Obtener el Token de la cabecera
