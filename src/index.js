@@ -10,6 +10,7 @@ import categoriasRuta from './routes/categorias.routes.js';
 import productosRuta from './routes/productos.routes.js';
 import serviciosRuta from './routes/servicios.routes.js';
 import authRoute from './routes/auth.routes.js';
+import sedesRuta from './routes/sedes.routes.js';
 
 const port = process.env.PORT || 3001;
 
@@ -33,6 +34,7 @@ app.use( '/api/categorias', categoriasRuta );
 app.use( '/api/productos', productosRuta );
 app.use( '/api/servicios', serviciosRuta );
 app.use( '/api/auth', authRoute );
+app.use( '/api/sedes', sedesRuta );
 
 // Iniciar el servidor
 app.listen(port, () => {
