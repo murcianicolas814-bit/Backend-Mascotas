@@ -1,0 +1,34 @@
+info:
+  name: Crear Usuario
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/usuarios"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |
+      {
+        "nombres": "Mario Alberto",
+        "apellidos": "Martínez Silva",
+        "tipoDocumento": "CC",
+        "documento": "1020304051",
+        "correo": "mario.martinez@zoolo.mx",
+        "telefono": "3001234568",
+        "password": "Password123*",
+        "rol": "RECEPCIONISTA",
+        "activo": true
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

@@ -1,14 +1,20 @@
 info:
-  name: Listar Usuarios (Paginado y Filtro Status)
+  name: Eliminar Usuario
   type: http
-  seq: 2
+  seq: 5
 
 http:
-  method: GET
-  url: http://localhost:3000/api/users
+  method: DELETE
+  url: "{{baseUrl}}/api/usuarios/:id"
   headers:
     - name: Accept
       value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  params:
+    - name: id
+      value: ID_AQUI
+      type: path
 
 settings:
   encodeUrl: true

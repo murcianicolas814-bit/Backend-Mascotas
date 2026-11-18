@@ -5,10 +5,12 @@ info:
 
 http:
   method: PATCH
-  url: "{{baseUrl}}/api/products/:id"
+  url: "{{baseUrl}}/api/productos/:id"
   headers:
     - name: Content-Type
       value: application/json
+    - name: X-Token
+      value: "{{token}}"
   params:
     - name: id
       value: ID_AQUI
@@ -17,7 +19,7 @@ http:
     type: json
     data: |
       {
-        "price": 115000,
-        "stock": 12,
-        "state": "disponible"
+        "precioVenta": 18000,
+        "stockActual": 45,
+        "estado": "Activo"
       }

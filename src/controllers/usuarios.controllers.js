@@ -1,26 +1,64 @@
 import { dbCreateUser, dbDeleteUser, dbGetUsers, dbGetUser, dbUpdateUser } from "../services/usuarios.services.js";
 import handleMongooseError from "../helpers/handle-mongoose-error.helper.js";
 import { generatePassword } from "../helpers/bcrypt.helpers.js";
+import { ROLES } from "../config/constant-roles.js";
 
 const createUser = async (req, res) => {
     try {
-        // Extrae el _id del userFound usando una desestructuración del payload que envia en la peticion (req) el Middleware de Autenticacion
-        const userFound = req.userFound;
-
-        // Usa un operador ternario para asignar el valor de _id a la variable id, o null si no existe
-        const id = userFound?._id ? userFound._id : null;
-
-        // Extrae los datos del cuerpo de la petición
         const inputData = req.body;
-        inputData.createdBy = id;
 
-        // Encripte la contraseña antes de guardarla en la base de datos (opcional, pero recomendado)
-        inputData.password = generatePassword(inputData.password);
+        // Normalización de campos para compatibilidad con el nuevo modelo Usuario:
+        // 1. Nombres y apellidos
+        if (!inputData.nombres && inputData.name) {
+            inputData.nombres = inputData.name;
+        }
+        if (!inputData.apellidos) {
+            inputData.apellidos = inputData.apellido || ' ';
+        }
 
-        // Usar el servicio para registrar (Mongoose valida automáticamente contra UserSchema)
+        // 2. Correo electrónico
+        if (!inputData.correo && inputData.email) {
+            inputData.correo = inputData.email;
+        }
+
+        // 3. Contraseña: se encripta y se guarda en passwordHash
+        const plainPassword = inputData.password || inputData.passwordHash;
+        if (plainPassword) {
+            inputData.passwordHash = generatePassword(plainPassword);
+            delete inputData.password;
+        }
+
+        // 4. Rol
+        if (!inputData.rol && inputData.role) {
+            const roleMap = {
+                'ADMIN': ROLES.ADMIN,
+                'ADMINISTRADOR': ROLES.ADMIN,
+                'VETERINARIO': ROLES.VETERINARIO,
+                'RECEPCIONISTA': ROLES.RECEPCIONISTA,
+                'CUSTOMER': ROLES.CLIENTE,
+                'CLIENTE': ROLES.CLIENTE
+            };
+            inputData.rol = roleMap[inputData.role] || inputData.role;
+        }
+
+        // Si no viene rol especificado, por defecto CLIENTE
+        if (!inputData.rol) {
+            inputData.rol = ROLES.CLIENTE;
+        }
+
+        // 5. Estado / Activo
+        if (inputData.status !== undefined && inputData.activo === undefined) {
+            inputData.activo = inputData.status;
+            delete inputData.status;
+        }
+
+        // Usar el servicio para registrar (Mongoose valida automáticamente contra usuarioSchema)
         const data = await dbCreateUser(inputData);
 
-        res.json({ msg: 'Registra usuario', data: data });
+        const userObj = data.toObject ? data.toObject() : { ...data };
+        delete userObj.passwordHash;
+
+        res.status(201).json({ msg: 'Usuario registrado con éxito', data: userObj });
     }
     catch (error) {
         console.error(error);
@@ -28,7 +66,6 @@ const createUser = async (req, res) => {
         // Verifica si la excepción proviene de una validación de Mongoose
         const validationErrors = handleMongooseError(error);
         if (validationErrors) {
-            // Retorna como respuesta el objeto: { [propiedad]: mensajeDeError } con código HTTP 400
             return res.status(400).json(validationErrors);
         }
 
@@ -36,31 +73,20 @@ const createUser = async (req, res) => {
     }
 }
 
-// Controlador para listar usuarios con paginación y filtro de status
+// Controlador para listar usuarios con paginación y filtro de status/activo
 const getUsers = async (req, res) => {
     try {
-        // Paso 1: Extraer los query parameters de la URL
-        // Ejemplos:
-        //   - /api/users?status=true   (usuarios activos)
-        //   - /api/users?status=false  (usuarios inactivos)
-        //   - /api/users?status=all    (todos los usuarios)
-        //   - /api/users?page=1&limit=10&status=all
-        const { page = 1, limit = 10, status = 'true' } = req.query;
+        const { page = 1, limit = 10, status = 'true', rol = 'all' } = req.query;
 
-        // Paso 2: Invocar el servicio de consulta enviando paginación y filtro de estado
-        const data = await dbGetUsers(page, limit, status);
+        const data = await dbGetUsers(page, limit, status, rol);
 
-        // Paso 3: Retornar la respuesta exitosa en formato JSON con la metadata y la lista
         res.json({
             msg: 'Lista de Usuarios',
             data: data
         });
     }
     catch (error) {
-        // En caso de excepción, imprimir el error en consola para depuración en el servidor
         console.error(error);
-
-        // Responder al cliente con un mensaje de error descriptivo
         res.status(500).json({
             msg: 'No ha podido obtener los usuarios'
         });
@@ -101,25 +127,44 @@ const updateUser = async (req, res) => {
         const id = req.params.id;
         const inputData = req.body;
 
-        // Usar el servicio para actualizar (con runValidators: true para validar en Mongoose)
+        // Si se actualiza la contraseña, encriptar
+        if (inputData.password) {
+            inputData.passwordHash = generatePassword(inputData.password);
+            delete inputData.password;
+        }
+        if (inputData.email && !inputData.correo) {
+            inputData.correo = inputData.email;
+            delete inputData.email;
+        }
+        if (inputData.role && !inputData.rol) {
+            inputData.rol = inputData.role;
+            delete inputData.role;
+        }
+        if (inputData.status !== undefined && inputData.activo === undefined) {
+            inputData.activo = inputData.status;
+            delete inputData.status;
+        }
+
+        // Usar el servicio para actualizar
         const data = await dbUpdateUser(id, inputData);
 
         if (!data) {
             return res.status(404).json({ msg: 'Usuario no encontrado' });
         }
 
+        const userObj = data.toObject ? data.toObject() : { ...data };
+        delete userObj.passwordHash;
+
         res.json({
             msg: 'Usuario Actualizado',
-            data: data
+            data: userObj
         });
     }
     catch (error) {
         console.error(error);
 
-        // Verifica si la excepción proviene de una validación de Mongoose al actualizar
         const validationErrors = handleMongooseError(error);
         if (validationErrors) {
-            // Retorna como respuesta el objeto: { [propiedad]: mensajeDeError } con código HTTP 400
             return res.status(400).json(validationErrors);
         }
 
@@ -139,9 +184,12 @@ const getUser = async (req, res) => {
             return res.status(404).json({ msg: 'Usuario no encontrado' });
         }
 
+        const userObj = data.toObject ? data.toObject() : { ...data };
+        delete userObj.passwordHash;
+
         res.json({
             msg: 'Obtiene un usuario',
-            data: data
+            data: userObj
         });
     }
     catch (error) {
@@ -157,7 +205,6 @@ const getUser = async (req, res) => {
         });
     }
 }
-
 
 export {
     createUser,

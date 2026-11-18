@@ -5,22 +5,24 @@ info:
 
 http:
   method: POST
-  url: http://localhost:3000/api/products
+  url: "{{baseUrl}}/api/productos"
   headers:
     - name: Content-Type
       value: application/json
     - name: X-Token
-      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YWUzODhmMTg2Y2RhYjU0YjkyMTE1N2IiLCJuYW1lIjoiRnJhbmsgTWFydGluZXoiLCJlbWFpbCI6ImZyYW5rLm1hcnRpbmV6QGNvcnJlby5jbyIsInJvbGUiOiJDVVNUT01FUiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzkzMzc0ODYzLCJleHAiOjE3OTMzNzg0NjN9.YC4L9gMbvw5ubL3XbiFhWzVeCT6UdcfIpd6ax_ud8cc
+      value: "{{token}}"
   body:
     type: json
     data: |
       {
-        "name": "Cepillo de Dientes Colgate",
-        "description": "El cepillo mas poderoso del mercado",
-        "price": 3,
-        "stock": 50,
-        //"state": "disponible",
-        "category": "6ae4bb34b91276b07fffe5e4"
+        "codigo": "MED-001",
+        "nombre": "Amoxicilina 500mg Caninos/Felinos",
+        "unidad": "TABLETA",
+        "stockActual": 50,
+        "stockMinimo": 10,
+        "precioVenta": 15000,
+        "estado": "Activo",
+        "categoria": "ID_CATEGORIA_AQUI"
       }
 
 settings:

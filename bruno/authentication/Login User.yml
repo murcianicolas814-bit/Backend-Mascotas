@@ -1,17 +1,20 @@
 info:
-  name: Login User
+  name: Login Usuario
   type: http
   seq: 2
 
 http:
   method: POST
-  url: http://localhost:3000/api/auth/login
+  url: "{{baseUrl}}/api/auth/login"
+  headers:
+    - name: Content-Type
+      value: application/json
   body:
     type: json
     data: |-
       {
-        "email": "frank.martinez@correo.co",
-        "password": "123456789"
+        "correo": "maria.gomez@correo.co",
+        "password": "Password123*"
       }
   auth: inherit
 

@@ -1,13 +1,14 @@
+import { ROLES } from '../config/constant-roles.js';
+
 const withoutRoleMiddleware = (req, res, next) => {
-    // Paso 1: Obtiene los datos de la peticion
-    const inputData = req.body;
+    // Al registrarse públicamente, se elimina cualquier intento de asignar rol administrativo
+    delete req.body.role;
+    delete req.body.rol;
+    
+    // Se asigna el rol CLIENTE por defecto
+    req.body.rol = ROLES.CLIENTE;
 
-    // Paso 2: Elimina el rol para que se registre el rol por defecto
-    delete inputData.role;      // Eliminando la propiedad role
-
-    // Paso 3: El Middleware lanza el control de la aplicacion a la siguiente funcion
     next();
 }
-
 
 export default withoutRoleMiddleware;

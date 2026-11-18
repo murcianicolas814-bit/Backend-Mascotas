@@ -5,18 +5,17 @@ info:
 
 http:
   method: POST
-  url: http://localhost:3000/api/categories
+  url: "{{baseUrl}}/api/categorias"
   headers:
     - name: Content-Type
       value: application/json
     - name: X-Token
-      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YWUzODhmMTg2Y2RhYjU0YjkyMTE1N2IiLCJuYW1lIjoiRnJhbmsgTWFydGluZXoiLCJlbWFpbCI6ImZyYW5rLm1hcnRpbmV6QGNvcnJlby5jbyIsInJvbGUiOiJDVVNUT01FUiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzkzMzg0NDQ5LCJleHAiOjE3OTMzODgwNDl9.jKvuILYrVc115EPwsjXgE7dKmW_U19UhnXleRHsYJRI
+      value: "{{token}}"
   body:
     type: json
     data: |
       {
-        "name": "Electrodomesticos",
-        "description": "Articulos de las diferentes marcas para el aseo del hogar"
+        "nombre": "Medicamentos Veterinarios"
       }
 
 settings:

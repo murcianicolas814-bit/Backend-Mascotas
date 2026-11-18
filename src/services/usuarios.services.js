@@ -1,46 +1,52 @@
-import UserModel from "../models/usuario.model.js";
+import Usuario from "../models/auth/usuario.model.js";
+import { ROLES } from "../config/constant-roles.js";
 
-const dbCreateUser = async ( newUser ) => {
-    return await UserModel.create( newUser );  // Registrar en la BD
+const dbCreateUser = async (newUser) => {
+    return await Usuario.create(newUser);  // Registrar en la BD
 }
 
 // Obtener la lista de usuarios con paginación y filtro de estado (activos, inactivos o todos)
-const dbGetUsers = async ( page = 1, limit = 10, status = 'true' ) => {
+const dbGetUsers = async (page = 1, limit = 10, status = 'true', rol = 'all') => {
     // Paso 1: Sanitizar los valores de paginación (números enteros >= 1)
-    const pageNumber = Math.max( 1, Number( page ) || 1 );
-    const limitNumber = Math.max( 1, Number( limit ) || 10 );
+    const pageNumber = Math.max(1, Number(page) || 1);
+    const limitNumber = Math.max(1, Number(limit) || 10);
 
     // Paso 2: Calcular el desplazamiento o salto de registros (skip)
-    // Fórmula: (página - 1) * límite
-    const skip = ( pageNumber - 1 ) * limitNumber;
+    const skip = (pageNumber - 1) * limitNumber;
 
-    // Paso 3: Construir el filtro dinámico según el query param 'status'
-    //   - status === 'true'  -> solo usuarios activos ({ status: true })
-    //   - status === 'false' -> solo usuarios inactivos ({ status: false })
-    //   - status === 'all'   -> todos sin distingo de status ({})
-    //   - por defecto        -> solo usuarios activos ({ status: true })
+    // Paso 3: Construir el filtro dinámico según el query param 'status' / 'activo'
     let filter = {};
 
-    if ( status === 'true' || status === true ) {
-        filter.status = true;
-    } else if ( status === 'false' || status === false ) {
-        filter.status = false;
-    } else if ( status === 'all' ) {
+    if (status === 'true' || status === true || status === 'activo') {
+        filter.activo = true;
+    } else if (status === 'false' || status === false || status === 'inactivo') {
+        filter.activo = false;
+    } else if (status === 'all' || status === 'todos') {
         filter = {}; // Objeto vacío: no filtra por status (trae todos)
     } else {
-        filter.status = true; // Valor por defecto
+        filter.activo = true; // Valor por defecto
     }
 
-    // Paso 4: Ejecutar en paralelo la consulta paginada y el conteo total con el mismo filtro
-    const [ users, total ] = await Promise.all([
-        // 4.1: Consulta los documentos aplicando el filtro, skip (saltar) y limit (cantidad máxima)
-        UserModel.find( filter )
-            .skip( skip )
-            .limit( limitNumber )
-            .populate('createdBy'),
+    if (rol == ROLES.ADMIN) {
+        filter.rol = ROLES.ADMIN;
+    } else if (rol == ROLES.VETERINARIO) {
+        filter.rol = ROLES.VETERINARIO;
+    } else if (rol == ROLES.RECEPCIONISTA) {
+        filter.rol = ROLES.RECEPCIONISTA;
+    } else if (rol == ROLES.CLIENTE) {
+        filter.rol = ROLES.CLIENTE;
+    }
 
-        // 4.2: Cuenta el total de documentos que coinciden exactamente con el filtro aplicado
-        UserModel.countDocuments( filter )
+    console.log(' ::: ', filter);
+
+    // Paso 4: Ejecutar en paralelo la consulta paginada y el conteo total con el mismo filtro
+    const [users, total] = await Promise.all([
+        Usuario.find(filter)
+            .skip(skip)
+            .limit(limitNumber)
+            .populate(['empleado', 'cliente']),
+
+        Usuario.countDocuments(filter)
     ]);
 
     // Paso 5: Retornar los datos obtenidos junto con la metadata de paginación y filtro
@@ -49,36 +55,44 @@ const dbGetUsers = async ( page = 1, limit = 10, status = 'true' ) => {
         total,                                        // Total de usuarios que coinciden con el filtro
         page: pageNumber,                             // Número de página consultada
         limit: limitNumber,                           // Cantidad de registros devueltos por página
-        totalPages: Math.ceil( total / limitNumber ) // Total de páginas disponibles
+        totalPages: Math.ceil(total / limitNumber)  // Total de páginas disponibles
     };
 }
 
-const dbDeleteUser = async ( id ) => {
-    // return await UserModel.findByIdAndDelete( id );
-    return await UserModel.findOneAndDelete({ _id: id });
+const dbDeleteUser = async (id) => {
+    return await Usuario.findByIdAndDelete(id);
 }
 
-const dbUpdateUser = async ( id, userUpdated ) => {
-    return await UserModel.findOneAndUpdate(
-        { _id: id },            // Objeto de consulta para buscar el documento que deseamos actualizar
-        userUpdated,            // El objeto con los datos del Documento que deseamos actualizar
+const dbUpdateUser = async (id, userUpdated) => {
+    return await Usuario.findByIdAndUpdate(
+        id,
+        userUpdated,
         {
             new: true,          // Retorna el documento ya actualizado
             runValidators: true // Ejecuta las validaciones definidas en el Schema de Mongoose al actualizar
         }
-    );
+    ).populate(['empleado', 'cliente']);
 }
 
-const dbGetUser = async ( id ) => {
-    // return await UserModel.findById( id );       // Obtiene un usuario por su ID
-    return await UserModel.findOne({ _id: id });
+const dbGetUser = async (id) => {
+    return await Usuario.findById(id).populate(['empleado', 'cliente']);
 }
 
-// email: jcarlosj@correo.co
-const dbGetUserByEmail = async ( email, status = true ) => {
-    return await UserModel.findOne({ email: email, status: status });
-}
+// Obtiene un usuario por su correo electrónico.
+// selectPassword: si es true, incluye el campo passwordHash (que tiene select: false por defecto)
+const dbGetUserByEmail = async (correo, selectPassword = false) => {
+    if (!correo) return null;
+    let query = Usuario.findOne({
+        correo: correo.toLowerCase(),
+        activo: true
+    });
 
+    if (selectPassword) {
+        query = query.select('+passwordHash');
+    }
+
+    return await query.populate(['empleado', 'cliente']).exec();
+}
 
 export {
     dbCreateUser,

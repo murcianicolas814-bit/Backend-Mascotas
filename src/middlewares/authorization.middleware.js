@@ -1,29 +1,39 @@
-// allowed roles: Roles permitidos ['ADMIN']
+import { ROLES } from '../config/constant-roles.js';
 
+// allowedRoles: Roles permitidos, ej. [ROLES.ADMIN] o ['ADMINISTRADOR', 'ADMIN']
 const authorizationMiddleware = ( allowedRoles ) => {
-
     return ( req, res, next ) => {
-        // Paso 1: Extraer el rol del usuario del payload del token que valida el Middleware de Autenticacion
-        const role = req.userFound.role;
-    
-        if ( ! role ) {
+        // Extraer el rol del usuario autenticado
+        const userRole = req.userFound?.rol || req.userFound?.role;
+
+        if ( ! userRole ) {
             return res.status(403).json({ msg: 'Error: El usuario autenticado no tiene rol definido' });
         }
 
-        // Paso 2: Verificar si el rol del usuario se encuentra en lista de roles permitidos... para esta ruta
-        if( ! allowedRoles.includes( role ) ) {
+        // Mapeo flexible para normalizar roles tradicionales e internos
+        const roleSynonyms = {
+            'ADMIN': [ROLES.ADMIN, 'ADMIN', 'ADMINISTRADOR'],
+            'ADMINISTRADOR': [ROLES.ADMIN, 'ADMIN', 'ADMINISTRADOR'],
+            'VETERINARIO': [ROLES.VETERINARIO, 'VETERINARIO'],
+            'RECEPCIONISTA': [ROLES.RECEPCIONISTA, 'RECEPCIONISTA'],
+            'CLIENTE': [ROLES.CLIENTE, 'CLIENTE', 'CUSTOMER'],
+            'CUSTOMER': [ROLES.CLIENTE, 'CLIENTE', 'CUSTOMER']
+        };
+
+        const isAuthorized = allowedRoles.some(allowed => {
+            const synonyms = roleSynonyms[allowed] || [allowed];
+            return synonyms.includes(userRole);
+        });
+
+        if ( ! isAuthorized ) {
             return res.status(403).json({
-                msg: `Error: el rol ${ role } no esta autorizado para realizar esta accion`
+                msg: `Error: el rol ${ userRole } no está autorizado para realizar esta acción`
             });
         }
-        
-        console.log(`Usuario autorizado con rol ${role}`);
 
         next();
     }
-
 }
-
 
 export {
     authorizationMiddleware

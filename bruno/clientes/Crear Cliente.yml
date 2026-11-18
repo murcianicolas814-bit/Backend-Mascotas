@@ -1,0 +1,41 @@
+info:
+  name: Crear Cliente
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/clientes"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nombres": "Carolina",
+        "apellidos": "Jiménez Duarte",
+        "tipoDocumento": "CC",
+        "documento": "1056789012",
+        "correo": "carolina.jimenez@correo.co",
+        "telefono": "3201234567",
+        "password": "Password123*",
+        "direccion": "Calle 45 # 23 - 10, Apto 302, Bogotá",
+        "consentimientoDatos": true,
+        "contactoEmergencia": {
+          "nombre": "Esteban Jiménez",
+          "telefono": "3119876543"
+        },
+        "observaciones": "Propietaria de 2 felinos rescatados",
+        "activo": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

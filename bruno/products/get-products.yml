@@ -5,10 +5,12 @@ info:
 
 http:
   method: GET
-  url: http://localhost:3000/api/products
+  url: "{{baseUrl}}/api/productos"
   headers:
     - name: Accept
       value: application/json
+    - name: X-Token
+      value: "{{token}}"
 
 settings:
   encodeUrl: true

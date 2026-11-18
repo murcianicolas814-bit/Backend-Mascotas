@@ -3,117 +3,117 @@ import { generateToken } from "../helpers/jwt.helpers.js";
 import { dbGetUserByEmail } from "../services/usuarios.services.js";
 
 const loginUser = async ( req, res ) => {
-
     try {
-        
-        // Paso 1: Obtener las credenciales del usuario { email: '...', password: '...' }
         const inputData = req.body;
-    
-        // Valida si el campo email NO viene dentro de las inputData
-        if( ! inputData.email ) {
-            // Crea una Exception ---> Desarrollador
-            // throw new Error( 'Se olvido pasar el correo en el campo email' );
-            res.json({
-                msg: 'Se olvido pasar el correo en el campo email'
+        const correo = inputData.correo || inputData.email;
+        const password = inputData.password || inputData.contraseña;
+
+        if ( ! correo ) {
+            return res.status(400).json({
+                msg: 'El correo electrónico es obligatorio (campo correo o email)'
             });
         }
-    
-        // Valida si el campo password NO viene dentro de las inputData
-        if( ! inputData.password ) {
-            res.json({
-                msg: 'Se olvido pasar la contraseña en el campo password'
+
+        if ( ! password ) {
+            return res.status(400).json({
+                msg: 'La contraseña es obligatoria (campo password)'
             });
         }
-    
-        // Paso 2: Verificar si usuario existe ¿email esta registrado en la BD?
-        const userFound = await dbGetUserByEmail( inputData.email );
-    
-        if( ! userFound ) {
-            res.json({
-                msg: 'El usuario no existe. Por favor registrese'
+
+        // Buscar usuario incluyendo passwordHash para validar
+        const userFound = await dbGetUserByEmail( correo, true );
+
+        if ( ! userFound ) {
+            return res.status(404).json({
+                msg: 'El usuario no existe o se encuentra inactivo. Por favor verifique sus credenciales'
             });
         }
-    
-        // Paso 3: Verificar si la contraseña es valida
-        const isValid = verifyPassword( inputData.password, userFound.password )
-    
-        if( ! isValid ) {
-            res.json({
-                msg: 'El password es invalido'
+
+        // Verificar si la contraseña es válida
+        const hashToVerify = userFound.passwordHash || userFound.password;
+        const isValid = verifyPassword( password, hashToVerify );
+
+        if ( ! isValid ) {
+            return res.status(401).json({
+                msg: 'Contraseña o credenciales inválidas'
             });
         }
-    
-        // Paso 4: Generar el Token (Tarjeta que presento que Autentica y Autoriza)
+
+        // Generar Payload para el Token JWT
         const payload = {
             _id: userFound._id,
-            name: userFound.name,
-            email: userFound.email,
-            role: userFound.role,
-            status: userFound.status
-        }
-    
+            nombres: userFound.nombres,
+            apellidos: userFound.apellidos,
+            correo: userFound.correo,
+            rol: userFound.rol,
+            activo: userFound.activo,
+            empleado: userFound.empleado,
+            cliente: userFound.cliente,
+            // Campos de compatibilidad hacia atrás:
+            name: `${userFound.nombres} ${userFound.apellidos}`.trim(),
+            email: userFound.correo,
+            role: userFound.rol,
+            status: userFound.activo
+        };
+
         const token = generateToken( payload );
-    
-        // Paso 5: Eliminar el campo password) del objeto
-        const jsonObj = userFound.toObject();   // Convertir un BJSON a un Objeto de JavaScript
-    
-        // Eliminar propiedades no deseadas
+
+        // Convertir a objeto y limpiar datos sensibles
+        const jsonObj = userFound.toObject();
+        delete jsonObj.passwordHash;
         delete jsonObj.password;
-    
+
         res.json({
-            msg: 'Login de usuario',
+            msg: 'Login de usuario exitoso',
             token: token,
             data: jsonObj
         });
-
     } 
     catch (error) {
         console.error( error );
-        
-        res.json({
-            msg: 'No se autenticar el usuario'
+        res.status(500).json({
+            msg: 'No se pudo autenticar el usuario'
         });
     }
-
 }
-
 
 const verifyAuthenticate = ( req, res ) => {
     try {
-        // Paso 1: Obtiene los datos del usuario que le envia el Middleware de Autenticacion
         const userFound = req.userFound;
 
-        // Paso 2: Crear nuevo Payload y Generamos el Token
         const newPayload = {
             _id: userFound._id,
-            name: userFound.name,
-            email: userFound.email,
-            role: userFound.role,
-            status: userFound.status
-        }
+            nombres: userFound.nombres,
+            apellidos: userFound.apellidos,
+            correo: userFound.correo,
+            rol: userFound.rol,
+            activo: userFound.activo,
+            empleado: userFound.empleado,
+            cliente: userFound.cliente,
+            name: `${userFound.nombres} ${userFound.apellidos}`.trim(),
+            email: userFound.correo,
+            role: userFound.rol,
+            status: userFound.activo
+        };
 
         const newToken = generateToken( newPayload );
 
-        // Paso 3: Voy a eliminar las propiedades sensibles del objeto retornado al usuario
-        const jsObj = userFound.toObject();     // Convierte un BJSON en un Objeto JavaScript
-
-        delete jsObj.password;        // Elimina el campo password del Objeto que retornamos al usuario
+        const jsObj = userFound.toObject();
+        delete jsObj.passwordHash;
+        delete jsObj.password;
 
         res.json({
-            msg: 'Autenticidad del Token Verificada con exito',
+            msg: 'Autenticidad del Token Verificada con éxito',
             token: newToken,
             data: jsObj
         });
- 
     } catch (error) {
         console.error( error );
-        
-        res.json({
+        res.status(500).json({
             msg: 'No se pudo verificar la autenticidad de las credenciales'
         });
     }
 }
-
 
 export {
     loginUser,

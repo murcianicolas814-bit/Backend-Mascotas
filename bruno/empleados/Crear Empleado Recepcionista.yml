@@ -1,0 +1,40 @@
+info:
+  name: Crear Empleado Recepcionista
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/empleados"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nombres": "Laura Sofía",
+        "apellidos": "Vargas Cárdenas",
+        "tipoDocumento": "CC",
+        "documento": "1045678912",
+        "correo": "laura.vargas@zoolo.mx",
+        "telefono": "3156781234",
+        "password": "Password123*",
+        "roles": [
+          "RECEPCIONISTA"
+        ],
+        "cargo": "Recepcionista y Atención al Cliente",
+        "turno": "MAÑANA",
+        "cajaAsignada": "Caja 01 - Principal",
+        "activo": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

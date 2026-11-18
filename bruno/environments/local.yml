@@ -2,3 +2,7 @@ name: local
 variables:
   - name: baseUrl
     value: http://localhost:3000
+    description: ""
+  - name: token
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YWZkYzQ1YzMxZGUxNjg0Y2ZhNzgyYWMiLCJub21icmVzIjoiTWFyaWEgQW5kcmVhIiwiYXBlbGxpZG9zIjoiR8OzbWV6IFJ1aXoiLCJjb3JyZW8iOiJtYXJpYS5nb21lekBjb3JyZW8uY28iLCJyb2wiOiJBRE1JTklTVFJBRE9SIiwiYWN0aXZvIjp0cnVlLCJlbXBsZWFkbyI6bnVsbCwiY2xpZW50ZSI6bnVsbCwibmFtZSI6Ik1hcmlhIEFuZHJlYSBHw7NtZXogUnVpeiIsImVtYWlsIjoibWFyaWEuZ29tZXpAY29ycmVvLmNvIiwicm9sZSI6IkFETUlOSVNUUkFET1IiLCJzdGF0dXMiOnRydWUsImlhdCI6MTc5NTAxNTk4NywiZXhwIjoxNzk1MDE5NTg3fQ.Fta8x3AkLgfATL5Y0W7-HLea-HDIPnQYJ4ucFZAx0RI
+    description: ""

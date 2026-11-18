@@ -1,0 +1,37 @@
+info:
+  name: Actualizar Cliente
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/clientes/:id"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  params:
+    - name: id
+      value: ID_CLIENTE_AQUI
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "direccion": "Carrera 15 # 85 - 24, Bogotá",
+        "telefono": "3209998877",
+        "contactoEmergencia": {
+          "nombre": "Esteban Jiménez",
+          "telefono": "3128887766"
+        },
+        "observaciones": "Dirección actualizada para domicilios y medicamentos"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

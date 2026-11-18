@@ -5,10 +5,10 @@ info:
 
 http:
   method: GET
-  url: http://localhost:3000/api/auth/renew-token
+  url: "{{baseUrl}}/api/auth/renew-token"
   headers:
     - name: X-Token
-      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YWUwZDVkNGFhM2YwODY2ZWIwODQyNWMiLCJuYW1lIjoiQnJheWFuIENvcnBhIiwiZW1haWwiOiJicmF5YW5jb3JwYUBjb3JyZW8uY28iLCJyb2xlIjoiU0VMTEVSIiwic3RhdHVzIjp0cnVlLCJpYXQiOjE3OTMyOTM3ODUsImV4cCI6MTc5MzI5NzM4NX0.Rwo1WqI9Sxl2WIDMI_GXOnkbrJFVGn1n_A6ZazQ-id8
+      value: "{{token}}"
   auth: inherit
 
 settings:

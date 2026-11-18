@@ -5,10 +5,12 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/categories/:id"
+  url: "{{baseUrl}}/api/categorias/:id"
   headers:
     - name: Accept
       value: application/json
+    - name: X-Token
+      value: "{{token}}"
   params:
     - name: id
       value: ID_AQUI

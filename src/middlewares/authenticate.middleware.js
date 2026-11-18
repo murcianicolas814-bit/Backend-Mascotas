@@ -1,56 +1,49 @@
-import { generateToken, validateToken } from "../helpers/jwt.helpers.js";
+import { validateToken } from "../helpers/jwt.helpers.js";
 import { dbGetUserByEmail } from "../services/usuarios.services.js";
 
 const authMiddleware = async ( req, res, next ) => {
-    // Paso 1: Obtener el Token de la cabecera
-    const token = req.header( 'X-Token' );
+    try {
+        // Paso 1: Obtener el Token de la cabecera
+        const token = req.header( 'X-Token' );
 
-    const msg = 'Hola soy el Middleware de Autenticacion';
-    console.log( 'token: ', token );
+        if( ! token ) {
+            return res.status( 401 ).json({
+                msg: 'Cadena de token vacía. Debe proporcionar la cabecera X-Token'
+            });
+        }
 
-    // (2.1) Verifica que haya recibido una cadena 
-    if( ! token ) {
-        res.status( 401 ).json({
-            msg: 'Cadena de token vacia'
-        });
+        // Divide la cadena en partes usando el punto como referencia
+        const tokenParts = token.split( '.' );
+        if( tokenParts.length !== 3 ) {
+            return res.status( 401 ).json({
+                msg: 'Formato del token no es válido'
+            });
+        }
+
+        // Verificar la autenticidad del token
+        const payload = validateToken(token);
+        if( ! payload ) {
+            return res.status( 401 ).json({
+                msg: 'Token inválido o expirado'
+            });
+        }
+
+        // Paso 3: Verificar que el usuario exista en la base de datos y esté activo
+        const correo = payload.correo || payload.email;
+        const userFound = await dbGetUserByEmail( correo );
+
+        if( ! userFound ) {
+            return res.status( 401 ).json({
+                msg: 'El usuario se encuentra deshabilitado o no está registrado'
+            });
+        }
+
+        req.userFound = userFound;
+        next();
+    } catch (error) {
+        console.error('Error en authMiddleware:', error);
+        return res.status(500).json({ msg: 'Error interno en autenticación' });
     }
-
-    // (2.2) Divide la cadena en partes usando el (.) punto como referencia
-    const tokenParts = token.split( '.' );
-    // console.log( 'Token Parts: ', tokenParts );
-    
-    // (2.3) Verificar que la cadena tenga 3 partes separadas por puntos (Forma base de un Token)
-    if( tokenParts.length !== 3 ) {
-        res.json({
-            msg: 'Formato del token no es valido'
-        });
-    }
-
-    // (2.4) Verificar la autenticidad del token (si fue generado por jwt de esta aplicacion)
-    const payload = validateToken(token);
-
-    if( ! payload ) {
-        res.json({
-            msg: 'Token invalido o inactivo'
-        });
-    }
-
-    console.log( 'payload (middleware): ', payload );
-
-    // Paso 3: Verificar que el usuario exista en la base de datos (si el usuario fue eliminado o su estado es false es decir esa inactivo, el token ya no es valido)
-    const userFound = await dbGetUserByEmail( payload.email );
-
-    if( ! userFound ) {
-        res.json({
-            msg: 'El usuario deshabilitado o no registrado. No es posible generar token'
-        });
-    }
-
-    req.userFound = userFound;   // Guardar el usuario encontrado en la request para que pueda ser usado en los controladores
-
-    console.log( 'userFound', userFound );
-
-    next();
 }
 
 export {

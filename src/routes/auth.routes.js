@@ -12,13 +12,13 @@ const router = Router();
 // Define las rutas para la autenticacion
 
 // 1. Registro publico de usuarios (default: CUSTOMER) Middleware asegurarme que solo se registre CUSTOMER
-router.post( '/register', withoutRoleMiddleware, createUser ); 
+router.post('/register', withoutRoleMiddleware, createUser);
 
 // 2. Login de usuarios
-router.post( '/login', loginUser );
+router.post('/login', loginUser);
 
 // 3. Renovación de Credenciales (Token)
-router.get( '/renew-token', authMiddleware, verifyAuthenticate );
+router.get('/renew-token', authMiddleware, verifyAuthenticate);
 
 // 4. Recuperar contraseña
 // 5. Habilitar cuenta registrada publicamente

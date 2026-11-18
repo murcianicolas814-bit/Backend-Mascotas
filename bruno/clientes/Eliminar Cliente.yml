@@ -1,0 +1,25 @@
+info:
+  name: Eliminar Cliente
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/api/clientes/:id"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  params:
+    - name: id
+      value: ID_CLIENTE_AQUI
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

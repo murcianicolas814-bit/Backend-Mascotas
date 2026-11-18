@@ -5,7 +5,25 @@ info:
 
 http:
   method: POST
-  url: http://localhost:3000/api/servicios
+  url: "{{baseUrl}}/api/servicios"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Consulta General Veterinaria",
+        "descripcion": "Valoración médica clínica y diagnóstico preventivo para mascotas",
+        "categoria": "CONSULTA",
+        "precio": 50000,
+        "duracionMinutos": 30,
+        "requiereAyuno": false,
+        "indicacionesPrevias": "Presentar carné de vacunación y mascota con collar o guacal",
+        "estado": "Activo"
+      }
   auth: inherit
 
 settings:

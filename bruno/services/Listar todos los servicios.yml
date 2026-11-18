@@ -5,10 +5,16 @@ info:
 
 http:
   method: GET
-  url: http://localhost:3000/api/servicios?estado=todos
+  url: "{{baseUrl}}/api/servicios?estado=todos&pagina=1&limite=10"
   params:
     - name: estado
       value: todos
+      type: query
+    - name: pagina
+      value: "1"
+      type: query
+    - name: limite
+      value: "10"
       type: query
   auth: inherit
 

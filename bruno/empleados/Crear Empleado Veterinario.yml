@@ -1,0 +1,45 @@
+info:
+  name: Crear Empleado Veterinario
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/empleados"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nombres": "Andrés Felipe",
+        "apellidos": "Morales Castro",
+        "tipoDocumento": "CC",
+        "documento": "1032456789",
+        "correo": "andres.morales@zoolo.mx",
+        "telefono": "3104567890",
+        "password": "Password123*",
+        "roles": [
+          "VETERINARIO"
+        ],
+        "cargo": "Médico Veterinario Cirujano",
+        "tarjetaProfesional": "TP-99887-COL",
+        "especialidades": [
+          "Cirugía General",
+          "Dermatología Canina"
+        ],
+        "sedes": [],
+        "servicios": [],
+        "activo": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
