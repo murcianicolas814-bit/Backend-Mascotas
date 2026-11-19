@@ -52,7 +52,7 @@ const createUser = async (req, res) => {
             delete inputData.status;
         }
 
-        // Usar el servicio para registrar (Mongoose valida automáticamente contra usuarioSchema)
+        // Usar el servicio para registrar (orquesta en cascada el Usuario y su perfil)
         const data = await dbCreateUser(inputData);
 
         const userObj = data.toObject ? data.toObject() : { ...data };
@@ -61,7 +61,7 @@ const createUser = async (req, res) => {
         res.status(201).json({ msg: 'Usuario registrado con éxito', data: userObj });
     }
     catch (error) {
-        console.error(error);
+        console.error('Error al registrar usuario:', error);
 
         // Verifica si la excepción proviene de una validación de Mongoose
         const validationErrors = handleMongooseError(error);
@@ -69,7 +69,7 @@ const createUser = async (req, res) => {
             return res.status(400).json(validationErrors);
         }
 
-        res.status(500).json({ msg: 'No se pudo registrar el usuario' });
+        res.status(400).json({ msg: error.message || 'No se pudo registrar el usuario' });
     }
 }
 
@@ -104,7 +104,7 @@ const deleteUser = async (req, res) => {
         }
 
         res.json({
-            msg: 'Elimina un usuario',
+            msg: 'Usuario y perfil asociado eliminados con éxito en cascada',
             data: data
         });
     }
@@ -136,6 +136,14 @@ const updateUser = async (req, res) => {
             inputData.correo = inputData.email;
             delete inputData.email;
         }
+        if (inputData.name && !inputData.nombres) {
+            inputData.nombres = inputData.name;
+            delete inputData.name;
+        }
+        if (inputData.apellido && !inputData.apellidos) {
+            inputData.apellidos = inputData.apellido;
+            delete inputData.apellido;
+        }
         if (inputData.role && !inputData.rol) {
             inputData.rol = inputData.role;
             delete inputData.role;
@@ -145,7 +153,7 @@ const updateUser = async (req, res) => {
             delete inputData.status;
         }
 
-        // Usar el servicio para actualizar
+        // Usar el servicio para actualizar (orquesta Usuario y perfil Cliente/Empleado)
         const data = await dbUpdateUser(id, inputData);
 
         if (!data) {
@@ -156,7 +164,7 @@ const updateUser = async (req, res) => {
         delete userObj.passwordHash;
 
         res.json({
-            msg: 'Usuario Actualizado',
+            msg: 'Usuario y perfil sincronizados y actualizados con éxito',
             data: userObj
         });
     }

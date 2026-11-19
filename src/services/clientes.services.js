@@ -2,6 +2,7 @@ import Cliente from '../models/auth/cliente.model.js';
 import Usuario from '../models/auth/usuario.model.js';
 import { generatePassword } from '../helpers/bcrypt.helpers.js';
 import { ROLES } from '../config/constant-roles.js';
+import { resolverPerfilCliente } from '../helpers/user-orchestrator.helper.js';
 
 /**
  * Crea un cliente en la base de datos y lo vincula con su cuenta de Usuario.
@@ -142,10 +143,18 @@ const dbEliminarCliente = async (id) => {
     return await Cliente.findByIdAndDelete(id);
 };
 
+/**
+ * Resuelve y obtiene el perfil de cliente a partir del ID de Usuario o Cliente.
+ */
+const dbObtenerPerfilClientePorUsuario = async (identificador) => {
+    return await resolverPerfilCliente(identificador);
+};
+
 export {
     dbCrearCliente,
     dbObtenerClientes,
     dbObtenerClientePorId,
     dbActualizarCliente,
-    dbEliminarCliente
+    dbEliminarCliente,
+    dbObtenerPerfilClientePorUsuario
 };

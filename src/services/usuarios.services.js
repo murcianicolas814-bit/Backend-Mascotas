@@ -1,20 +1,30 @@
 import Usuario from "../models/auth/usuario.model.js";
+import Cliente from "../models/auth/cliente.model.js";
+import Empleado from "../models/auth/empleado.model.js";
+import "../models/sede.model.js";
+import "../models/servicio.model.js";
 import { ROLES } from "../config/constant-roles.js";
+import {
+    orquestarCreacionUsuario,
+    orquestarActualizacionUsuario,
+    orquestarEliminacionUsuario,
+    resolverPerfilCliente
+} from "../helpers/user-orchestrator.helper.js";
 
+/**
+ * Crea un usuario en la base de datos junto a su perfil específico
+ * (Cliente o Empleado) de forma atómica y en cascada.
+ */
 const dbCreateUser = async (newUser) => {
-    return await Usuario.create(newUser);  // Registrar en la BD
-}
+    return await orquestarCreacionUsuario(newUser);
+};
 
-// Obtener la lista de usuarios con paginación y filtro de estado (activos, inactivos o todos)
+// Obtener la lista de usuarios con paginación y filtro de estado y rol
 const dbGetUsers = async (page = 1, limit = 10, status = 'true', rol = 'all') => {
-    // Paso 1: Sanitizar los valores de paginación (números enteros >= 1)
     const pageNumber = Math.max(1, Number(page) || 1);
     const limitNumber = Math.max(1, Number(limit) || 10);
-
-    // Paso 2: Calcular el desplazamiento o salto de registros (skip)
     const skip = (pageNumber - 1) * limitNumber;
 
-    // Paso 3: Construir el filtro dinámico según el query param 'status' / 'activo'
     let filter = {};
 
     if (status === 'true' || status === true || status === 'activo') {
@@ -22,64 +32,57 @@ const dbGetUsers = async (page = 1, limit = 10, status = 'true', rol = 'all') =>
     } else if (status === 'false' || status === false || status === 'inactivo') {
         filter.activo = false;
     } else if (status === 'all' || status === 'todos') {
-        filter = {}; // Objeto vacío: no filtra por status (trae todos)
+        filter = {};
     } else {
-        filter.activo = true; // Valor por defecto
+        filter.activo = true;
     }
 
-    if (rol == ROLES.ADMIN) {
-        filter.rol = ROLES.ADMIN;
-    } else if (rol == ROLES.VETERINARIO) {
-        filter.rol = ROLES.VETERINARIO;
-    } else if (rol == ROLES.RECEPCIONISTA) {
-        filter.rol = ROLES.RECEPCIONISTA;
-    } else if (rol == ROLES.CLIENTE) {
-        filter.rol = ROLES.CLIENTE;
+    if (rol && rol !== 'all' && rol !== 'todos') {
+        if ([ROLES.ADMIN, ROLES.VETERINARIO, ROLES.RECEPCIONISTA, ROLES.CLIENTE].includes(rol)) {
+            filter.rol = rol;
+        }
     }
 
-    console.log(' ::: ', filter);
-
-    // Paso 4: Ejecutar en paralelo la consulta paginada y el conteo total con el mismo filtro
     const [users, total] = await Promise.all([
         Usuario.find(filter)
             .skip(skip)
             .limit(limitNumber)
-            .populate(['empleado', 'cliente']),
+            .populate('cliente')
+            .populate({
+                path: 'empleado',
+                populate: ['sedes', 'servicios']
+            }),
 
         Usuario.countDocuments(filter)
     ]);
 
-    // Paso 5: Retornar los datos obtenidos junto con la metadata de paginación y filtro
     return {
-        users,                                        // Lista de usuarios correspondientes a la página actual
-        total,                                        // Total de usuarios que coinciden con el filtro
-        page: pageNumber,                             // Número de página consultada
-        limit: limitNumber,                           // Cantidad de registros devueltos por página
-        totalPages: Math.ceil(total / limitNumber)  // Total de páginas disponibles
+        users,
+        total,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(total / limitNumber)
     };
-}
+};
 
 const dbDeleteUser = async (id) => {
-    return await Usuario.findByIdAndDelete(id);
-}
+    return await orquestarEliminacionUsuario(id);
+};
 
 const dbUpdateUser = async (id, userUpdated) => {
-    return await Usuario.findByIdAndUpdate(
-        id,
-        userUpdated,
-        {
-            new: true,          // Retorna el documento ya actualizado
-            runValidators: true // Ejecuta las validaciones definidas en el Schema de Mongoose al actualizar
-        }
-    ).populate(['empleado', 'cliente']);
-}
+    return await orquestarActualizacionUsuario(id, userUpdated);
+};
 
 const dbGetUser = async (id) => {
-    return await Usuario.findById(id).populate(['empleado', 'cliente']);
-}
+    return await Usuario.findById(id)
+        .populate('cliente')
+        .populate({
+            path: 'empleado',
+            populate: ['sedes', 'servicios']
+        });
+};
 
 // Obtiene un usuario por su correo electrónico.
-// selectPassword: si es true, incluye el campo passwordHash (que tiene select: false por defecto)
 const dbGetUserByEmail = async (correo, selectPassword = false) => {
     if (!correo) return null;
     let query = Usuario.findOne({
@@ -91,8 +94,28 @@ const dbGetUserByEmail = async (correo, selectPassword = false) => {
         query = query.select('+passwordHash');
     }
 
-    return await query.populate(['empleado', 'cliente']).exec();
-}
+    return await query
+        .populate('cliente')
+        .populate({
+            path: 'empleado',
+            populate: ['sedes', 'servicios']
+        })
+        .exec();
+};
+
+// Obtiene el perfil de Cliente a partir del ID de Usuario o Cliente
+const dbObtenerPerfilClientePorUsuario = async (identificador) => {
+    return await resolverPerfilCliente(identificador);
+};
+
+// Obtiene la lista de veterinarios activos con sus sedes y servicios
+const dbObtenerVeterinariosActivos = async (filtros = {}) => {
+    return await Empleado.find({
+        activo: true,
+        roles: ROLES.VETERINARIO,
+        ...filtros
+    }).populate(['usuario', 'sedes', 'servicios']);
+};
 
 export {
     dbCreateUser,
@@ -100,5 +123,7 @@ export {
     dbDeleteUser,
     dbUpdateUser,
     dbGetUser,
-    dbGetUserByEmail
-}
+    dbGetUserByEmail,
+    dbObtenerPerfilClientePorUsuario,
+    dbObtenerVeterinariosActivos
+};

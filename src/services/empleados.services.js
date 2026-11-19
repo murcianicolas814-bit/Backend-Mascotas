@@ -166,10 +166,22 @@ const dbEliminarEmpleado = async (id) => {
     return await Empleado.findByIdAndDelete(id);
 };
 
+/**
+ * Obtiene la lista de veterinarios activos para consultas y citas.
+ */
+const dbObtenerVeterinariosActivos = async (filtros = {}) => {
+    return await Empleado.find({
+        activo: true,
+        roles: ROLES.VETERINARIO,
+        ...filtros
+    }).populate(['usuario', 'sedes', 'servicios']);
+};
+
 export {
     dbCrearEmpleado,
     dbObtenerEmpleados,
     dbObtenerEmpleadoPorId,
     dbActualizarEmpleado,
-    dbEliminarEmpleado
+    dbEliminarEmpleado,
+    dbObtenerVeterinariosActivos
 };
