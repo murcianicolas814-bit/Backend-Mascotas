@@ -13,7 +13,7 @@ http:
       value: "{{token}}"
   params:
     - name: id
-      value: ID_AQUI
+      value: "{{usuarioId}}"
       type: path
 
 settings:

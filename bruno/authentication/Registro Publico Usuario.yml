@@ -13,14 +13,19 @@ http:
     type: json
     data: |-
       {
-        "nombres": "Luisa Andrea",
+        "nombres": "Paula Andrea",
         "apellidos": "Gómez Ruiz",
         "tipoDocumento": "CC",
-        "documento": "1098765434",
-        "correo": "luisa.gomez@correo.co",
-        "telefono": "3151234561",
+        "documento": "1098765432",
+        "correo": "paula.gomez@correo.co",
+        "telefono": "3151234567",
         "password": "Password123*",
-        "rol": "ADMINISTRADOR"
+        "direccion": "Calle 127 # 15 - 45, Bogotá",
+        "consentimientoDatos": true,
+        "contactoEmergencia": {
+          "nombre": "Carlos Gómez",
+          "telefono": "3109876543"
+        }
       }
   auth: inherit
 

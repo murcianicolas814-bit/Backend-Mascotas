@@ -4,5 +4,29 @@ variables:
     value: http://localhost:3000
     description: ""
   - name: token
-    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YWZkYzQ1YzMxZGUxNjg0Y2ZhNzgyYWMiLCJub21icmVzIjoiTWFyaWEgQW5kcmVhIiwiYXBlbGxpZG9zIjoiR8OzbWV6IFJ1aXoiLCJjb3JyZW8iOiJtYXJpYS5nb21lekBjb3JyZW8uY28iLCJyb2wiOiJBRE1JTklTVFJBRE9SIiwiYWN0aXZvIjp0cnVlLCJlbXBsZWFkbyI6bnVsbCwiY2xpZW50ZSI6bnVsbCwibmFtZSI6Ik1hcmlhIEFuZHJlYSBHw7NtZXogUnVpeiIsImVtYWlsIjoibWFyaWEuZ29tZXpAY29ycmVvLmNvIiwicm9sZSI6IkFETUlOSVNUUkFET1IiLCJzdGF0dXMiOnRydWUsImlhdCI6MTc5NTAxNTk4NywiZXhwIjoxNzk1MDE5NTg3fQ.Fta8x3AkLgfATL5Y0W7-HLea-HDIPnQYJ4ucFZAx0RI
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YWZkYzQ1YzMxZGUxNjg0Y2ZhNzgyYWMiLCJub21icmVzIjoiTWFyaWEgQW5kcmVhIiwiYXBlbGxpZG9zIjoiR8OzbWV6IFJ1aXoiLCJjb3JyZW8iOiJtYXJpYS5nb21lekBjb3JyZW8uY28iLCJyb2wiOiJBRE1JTklTVFJBRE9SIiwiYWN0aXZvIjp0cnVlLCJlbXBsZWFkbyI6bnVsbCwiY2xpZW50ZSI6bnVsbCwibmFtZSI6Ik1hcmlhIEFuZHJlYSBHw7NtZXogUnVpeiIsImVtYWlsIjoibWFyaWEuZ29tZXpAY29ycmVvLmNvIiwicm9sZSI6IkFETUlOSVNUUkFET1IiLCJzdGF0dXMiOnRydWUsImlhdCI6MTc5NTAyMjkxMSwiZXhwIjoxNzk1MDI2NTExfQ.5cPZMJNyMBP8J3Jg8XejDHMaGwnwPzOgaZtLlZ4FAzE
     description: ""
+  - name: usuarioId
+    value: ""
+    description: "ID de Usuario"
+  - name: clienteId
+    value: ""
+    description: "ID de Perfil Cliente"
+  - name: empleadoId
+    value: ""
+    description: "ID de Perfil Empleado"
+  - name: veterinarioId
+    value: ""
+    description: "ID de Veterinario asignado"
+  - name: mascotaId
+    value: ""
+    description: "ID de Mascota"
+  - name: citaId
+    value: ""
+    description: "ID de Cita médica"
+  - name: servicioId
+    value: ""
+    description: "ID de Servicio clínico"
+  - name: sedeId
+    value: ""
+    description: "ID de Sede"

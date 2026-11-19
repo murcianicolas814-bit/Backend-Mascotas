@@ -13,7 +13,7 @@ http:
       value: "{{token}}"
   params:
     - name: id
-      value: ID_AQUI
+      value: "{{usuarioId}}"
       type: path
   body:
     type: json
@@ -22,7 +22,9 @@ http:
         "nombres": "Carlos Alberto",
         "apellidos": "Martínez Actualizado",
         "telefono": "3109876543",
-        "rol": "VETERINARIO",
+        "direccion": "Avenida Siempre Viva 742, Bogotá",
+        "cargo": "Especialista Veterinario Senior",
+        "especialidades": ["Cirugía General", "Traumatología"],
         "activo": true
       }
 

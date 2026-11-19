@@ -13,7 +13,7 @@ http:
       value: "{{token}}"
   params:
     - name: id
-      value: ID_EMPLEADO_AQUI
+      value: "{{empleadoId}}"
       type: path
   body:
     type: json
