@@ -1,0 +1,33 @@
+info:
+  name: Crear cita
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/citas"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "cliente": "{{clienteId}}",
+        "mascota": "{{mascotaId}}",
+        "empleado": "{{veterinarioId}}",
+        "sede": "{{sedeId}}",
+        "servicio": "{{servicioId}}",
+        "fechaInicio": "2030-01-15T15:00:00.000Z",
+        "observaciones": "Consulta preventiva"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

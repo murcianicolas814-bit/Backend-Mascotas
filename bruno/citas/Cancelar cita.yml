@@ -1,0 +1,27 @@
+info:
+  name: Cancelar cita
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/citas/{{citaId}}/cancelar"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "motivoCancelacion": "El cliente necesita cambiar la fecha"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

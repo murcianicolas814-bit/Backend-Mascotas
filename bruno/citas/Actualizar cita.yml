@@ -1,0 +1,28 @@
+info:
+  name: Actualizar cita
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/citas/{{citaId}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "fechaInicio": "2030-01-16T15:00:00.000Z",
+        "observaciones": "Reprogramada para revisión"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

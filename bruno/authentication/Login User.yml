@@ -13,10 +13,15 @@ http:
     type: json
     data: |-
       {
-        "correo": "maria.gomez@correo.co",
+        "correo": "paula.gomez@correo.co",
         "password": "Password123*"
       }
   auth: inherit
+
+runtime:
+  variables:
+    - name: baseUrl
+      value: localhost:3000
 
 settings:
   encodeUrl: true

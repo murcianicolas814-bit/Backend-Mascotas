@@ -1,0 +1,29 @@
+info:
+  name: Listar citas
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/citas?estado=PROGRAMADA&pagina=1&limite=10"
+  params:
+    - name: estado
+      value: PROGRAMADA
+      type: query
+    - name: pagina
+      value: "1"
+      type: query
+    - name: limite
+      value: "10"
+      type: query
+  headers:
+    - name: X-Token
+      value: "{{token}}"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
