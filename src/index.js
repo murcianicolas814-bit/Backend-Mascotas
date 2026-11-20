@@ -9,6 +9,7 @@ import clientesRuta from './routes/clientes.routes.js';
 import categoriasRuta from './routes/categorias.routes.js';
 import productosRuta from './routes/productos.routes.js';
 import serviciosRuta from './routes/servicios.routes.js';
+import mascotasRuta from './routes/mascota.routes.js';
 import authRoute from './routes/auth.routes.js';
 
 const port = process.env.PORT || 3001;
@@ -32,6 +33,7 @@ app.use( '/api/clientes', clientesRuta );
 app.use( '/api/categorias', categoriasRuta );
 app.use( '/api/productos', productosRuta );
 app.use( '/api/servicios', serviciosRuta );
+app.use( '/api/mascotas', mascotasRuta)
 app.use( '/api/auth', authRoute );
 
 // Iniciar el servidor

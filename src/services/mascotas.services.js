@@ -1,46 +1,101 @@
-import mascotaModel from "../models/mascota.model.js";
-import mascotaModel from "../models/mascota.model.js"
+import Mascota from '../models/mascota.model.js';
 
-const dbCrearMascota = async (nuevaMascota) => {
-    return await mascotaModel.create(nuevaMascota);
-}
+// Crear una nueva mascota
+const dbCrearMascota = async (datos) => {
+    const nuevaMascota = await Mascota.create(datos);
 
-const dbObtenerMascota = async (page = 1, limit = 10, activa = 'true', especie = 'all', raza = 'all', sexo = 'all', manejoEspecial = 'all', ) => {
-    // Paso 1: Sanitizar los valores de paginación (números enteros >= 1)
-    const pageNumber = Math.max(1, Number(page) || 1);
-    const limitNumber = Math.max(1, Number(limit) || 10);
+    return await Mascota.findById(nuevaMascota._id)
+        .populate({
+            path: 'cliente',
+            populate: { path: 'usuario' }
+        });
+};
 
-    // Paso 2: Calcular el desplazamiento o salto de registros (skip)
+// Obtener mascotas con paginación y filtros
+const dbObtenerMascotas = async (pagina = 1, limite = 10, filtros = {}) => {
+    const pageNumber = Math.max(1, Number(pagina) || 1);
+    const limitNumber = Math.max(1, Number(limite) || 10);
     const skip = (pageNumber - 1) * limitNumber;
 
-    // Paso 3: Construir el filtro dinámico según el query param 'status' / 'activo'
-    let filter = {};
+    const query = {};
 
-    if ( activa === 'true' || activa === 'activo' ) {
-        filter.activo = true
-    } else if (activa === 'false' || activa === 'inactio') {
-        filter.activo = false;
-    }else if (activa === 'all' || activa === 'todos') {
-        filter = {};
-    }else {
-        filter.activo = true;
+    // Filtrar por estado de la mascota
+    if (filtros.activa === 'true' || filtros.activa === true) {
+        query.activa = true;
+    } else if (filtros.activa === 'false' || filtros.activa === false) {
+        query.activa = false;
     }
 
-    
-}
+    // Filtrar por cliente, cuando se proporcione su ID
+    if (filtros.cliente) {
+        query.cliente = filtros.cliente;
+    }
+
+    // Filtrar por especie
+    if (filtros.especie) {
+        query.especie = filtros.especie.toUpperCase();
+    }
+
+    const [mascotas, total] = await Promise.all([
+        Mascota.find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limitNumber)
+            .populate({
+                path: 'cliente',
+                populate: { path: 'usuario' }
+            }),
+
+        Mascota.countDocuments(query)
+    ]);
+
+    return {
+        mascotas,
+        total,
+        pagina: pageNumber,
+        limite: limitNumber,
+        totalPaginas: Math.ceil(total / limitNumber)
+    };
+};
+
+// Obtener una mascota por su ID
+const dbObtenerMascotaPorId = async (id) => {
+    return await Mascota.findById(id)
+        .populate({
+            path: 'cliente',
+            populate: { path: 'usuario' }
+        });
+};
+
+// Actualizar una mascota
+const dbActualizarMascota = async (id, datosActualizar) => {
+    return await Mascota.findByIdAndUpdate(
+        id,
+        datosActualizar,
+        { new: true, runValidators: true }
+    ).populate({
+        path: 'cliente',
+        populate: { path: 'usuario' }
+    });
+};
 
 const dbEliminarMascota = async (id) => {
-    return await mascotaModel.findByIdAndDelete({_id: id});
+    return await Mascota.findByIdAndDelete({_id: id});
 }
 
-const dbActualizarMascota = async (id, mascotaActualizada) => {
-    return await mascotaModel.findByIdAndUpdate(
-        id,
-        mascotaActualizada,
-        {
-            new: true,
-            runValidators: true
-        }
-    ).populate(['PERRO', 'GATO', 'AVE', 'ROEDOR', 'REPTIL', 'OTRO']);
-}
+
+export {
+    dbCrearMascota,
+    dbObtenerMascotas,
+    dbObtenerMascotaPorId,
+    dbActualizarMascota,
+    dbEliminarMascota
+};
+
+
+
+
+
+
+
 
