@@ -13,12 +13,12 @@ http:
     type: json
     data: |-
       {
-        "nombres": "Paula Andrea",
+        "nombres": "Carol Andrea",
         "apellidos": "Gómez Ruiz",
         "tipoDocumento": "CC",
-        "documento": "1098765432",
+        "documento": "1098765435",
         "correo": "paula.gomez@correo.co",
-        "telefono": "3151234567",
+        "telefono": "3151234568",
         "password": "Password123*",
         "direccion": "Calle 127 # 15 - 45, Bogotá",
         "consentimientoDatos": true,
@@ -28,6 +28,11 @@ http:
         }
       }
   auth: inherit
+
+runtime:
+  variables:
+    - name: baseUrl
+      value: localhost:3000
 
 settings:
   encodeUrl: true

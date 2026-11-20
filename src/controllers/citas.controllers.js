@@ -135,7 +135,7 @@ export const obtenerCitas = async (req, res) => {
         }
         if (limite !== undefined && Number(limite) > 100) {
             throw crearErrorValidacion('limite no puede ser mayor que 100');
-        }
+        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 
         const filtros = { estado, sede, empleado, mascota, desde, hasta };
         const paginacion = { pagina, limite };
