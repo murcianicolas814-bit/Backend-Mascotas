@@ -7,6 +7,7 @@ import usuariosRuta from './routes/usuarios.routes.js';
 import empleadosRuta from './routes/empleados.routes.js';
 import clientesRuta from './routes/clientes.routes.js';
 import authRoute from './routes/auth.routes.js';
+import sedesRuta from './routes/sedes.routes.js';
 
 const port = process.env.PORT || 3001;
 
@@ -27,6 +28,7 @@ app.use( '/api/usuarios', usuariosRuta );
 app.use( '/api/empleados', empleadosRuta );
 app.use( '/api/clientes', clientesRuta );
 app.use( '/api/auth', authRoute );
+app.use( '/api/sedes', sedesRuta );
 
 // Iniciar el servidor
 app.listen(port, () => {

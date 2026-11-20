@@ -1,0 +1,33 @@
+info:
+  name: Actualizar Sede
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/sedes/{{sedeId}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Sede Norte Actualizada",
+        "ciudad": "Bogotá",
+        "direccion": "Carrera 45 # 120-31",
+        "telefono": "6015551235",
+        "correo": "norte.actualizada@mascotas.com",
+        "horarioAtencion": "Lunes a Viernes: 7:00 AM - 7:00 PM",
+        "activa": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

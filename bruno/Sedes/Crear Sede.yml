@@ -1,0 +1,33 @@
+info:
+  name: Crear Sede
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/sedes"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-Token
+      value: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Sede Norte",
+        "ciudad": "Bogotá",
+        "direccion": "Carrera 45 # 120-30",
+        "telefono": "6015551234",
+        "correo": "norte@mascotas.com",
+        "horarioAtencion": "Lunes a Sábado: 8:00 AM - 6:00 PM",
+        "activa": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
