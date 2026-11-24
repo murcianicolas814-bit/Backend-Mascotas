@@ -1,0 +1,32 @@
+info:
+  name: Listar Sedes
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/sedes?pagina=1&limite=10&activa=true"
+  params:
+    - name: pagina
+      value: "1"
+      type: query
+    - name: limite
+      value: "10"
+      type: query
+    - name: activa
+      value: "true"
+      type: query
+    - name: ciudad
+      value: ""
+      type: query
+    - name: busqueda
+      value: ""
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

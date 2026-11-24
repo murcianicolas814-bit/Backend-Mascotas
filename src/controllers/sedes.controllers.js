@@ -1,134 +1,105 @@
+import {
+    dbCrearSede,
+    dbObtenerSedes,
+    dbObtenerSedePorId,
+    dbActualizarSede,
+    dbEliminarSede
+} from '../services/sedes.services.js';
+import handleMongooseError from '../helpers/handle-mongoose-error.helper.js';
 
-import { dbCreateSede, dbDeleteSede, dbGetSedes, dbGetSede, dbUpdateSede} from "../services/sedes.services.js";
-
-const crearSede = async ( req, res ) => {
+const crearSede = async (req, res) => {
     try {
-        // Extrae el ID del usuario
-        const userFound = req.userFound;
-        const id = userFound._id;
+        const datos = {
+            ...req.body,
+            creadoPor: req.userFound._id
+        };
+        const data = await dbCrearSede(datos);
 
-        // Extrae los datos del cuerpo de la petición
-        const inputData = req.body;
-        inputData.creadoPor = id;
-
-        // Usar el servicio para registrar
-        const data = await dbCreateSede( inputData );
-
-        res.json({ 
-            msg: 'Sede Creada', 
-            data: data 
+        res.status(201).json({
+            msg: 'Sede registrada con éxito',
+            data
         });
-
+    } catch (error) {
+        console.error('Error al crear sede:', error);
+        const mongooseError = handleMongooseError(error);
+        if (mongooseError) return res.status(400).json(mongooseError);
+        res.status(500).json({ msg: 'No se pudo registrar la sede' });
     }
-    catch ( error ) {
-        console.error( error );
+};
 
-        if( error.name === 'ValidationError' ) {
-            const errors = {};
-
-            for( const field in error.errors ) {
-                errors[field] = error.errors[field].message;
-            }
-
-            return res.status(400).json({ errors });
-        }
-
-        res.status(500).json({ 
-            msg: 'No se pudo registrar la sede' 
-        });
-    }
-}
-
-const getSedes = async ( req, res ) => {
+const obtenerSedes = async (req, res) => {
     try {
-        const data = await dbGetSedes();
+        const { pagina = 1, limite = 10, activa = 'true', ciudad, busqueda } = req.query;
+        const data = await dbObtenerSedes(pagina, limite, { activa, ciudad, busqueda });
 
-        res.json({ 
-            msg: 'Sedes obtenidas', 
-            data: data 
+        res.json({
+            msg: 'Lista de sedes obtenida con éxito',
+            data
         });
-    } 
-    catch ( error ) {
-        console.error( error );
-
-        res.status(500).json({ 
-            msg: 'Error al obtener las sedes' 
-        });
+    } catch (error) {
+        console.error('Error al obtener sedes:', error);
+        res.status(500).json({ msg: 'No se pudo obtener la lista de sedes' });
     }
-}
+};
 
-const deleteSede = async ( req, res ) => {
+const obtenerSedePorId = async (req, res) => {
     try {
-        const id = req.params.id;
+        const data = await dbObtenerSedePorId(req.params.id);
 
-        const data = await dbDeleteSede( id );
+        if (!data) return res.status(404).json({ msg: 'Sede no encontrada' });
 
-        res.json({ 
-            msg: 'Sede eliminada', 
-            data: data 
+        res.json({
+            msg: 'Sede obtenida con éxito',
+            data
         });
+    } catch (error) {
+        console.error('Error al obtener sede:', error);
+        const mongooseError = handleMongooseError(error);
+        if (mongooseError) return res.status(400).json(mongooseError);
+        res.status(500).json({ msg: 'No se pudo obtener la sede' });
     }
-    catch ( error ) {
-        console.error( error );
+};
 
-        res.status(500).json({ 
-            msg: 'Error al eliminar la sede' 
-        });
-    }
-}
-
-const updateSede = async ( req, res ) => {
+const actualizarSede = async (req, res) => {
     try {
-        const id = req.params.id;
-        const inputData = req.body;
+        const data = await dbActualizarSede(req.params.id, req.body);
 
-        const data = await dbUpdateSede( id, inputData );
+        if (!data) return res.status(404).json({ msg: 'Sede no encontrada para actualizar' });
 
-        res.json({ 
-            msg: 'Sede actualizada', 
-            data: data 
+        res.json({
+            msg: 'Sede actualizada con éxito',
+            data
         });
+    } catch (error) {
+        console.error('Error al actualizar sede:', error);
+        const mongooseError = handleMongooseError(error);
+        if (mongooseError) return res.status(400).json(mongooseError);
+        res.status(500).json({ msg: 'No se pudo actualizar la sede' });
     }
-    catch ( error ) {
-        console.error( error );
+};
 
-        res.status(500).json({ 
-            msg: 'Error al actualizar la sede' 
-        });
-    }
-}
-
-const getSede = async ( req, res ) => {
+const eliminarSede = async (req, res) => {
     try {
-        const id = req.params.id;
+        const data = await dbEliminarSede(req.params.id);
 
-        const data = await dbGetSede( id );
+        if (!data) return res.status(404).json({ msg: 'Sede no encontrada para eliminar' });
 
-        res.json({ 
-            msg: 'Sede obtenida', 
-            data: data 
+        res.json({
+            msg: 'Sede desactivada con éxito',
+            data
         });
+    } catch (error) {
+        console.error('Error al eliminar sede:', error);
+        const mongooseError = handleMongooseError(error);
+        if (mongooseError) return res.status(400).json(mongooseError);
+        res.status(500).json({ msg: 'No se pudo desactivar la sede' });
     }
-    catch ( error ) {
-        console.error( error );
-
-        if( error.name === 'CastError' ) {
-            return res.status(400).json({
-                msg: 'Error en el formato del ID',
-                [error.path]: `El identificador ${error.value} no tiene el formato válido que requiere MongoDB`
-            });
-        }
-
-        res.status(500).json({ 
-            msg: 'Error al obtener la sede' 
-        });
-    }
-}
+};
 
 export {
     crearSede,
-    getSedes,
-    deleteSede,
-    updateSede,
-    getSede
-}
+    obtenerSedes,
+    obtenerSedePorId,
+    actualizarSede,
+    eliminarSede
+};

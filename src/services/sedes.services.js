@@ -1,41 +1,71 @@
-import sedesModel from '../models/sede.model.js';
+import Sede from '../models/sede.model.js';
 
-const dbCreateSede = async ( newSede ) => {
-    return await sedesModel.create( newSede );  // Registrar en la BD
-}
+const dbCrearSede = async (datos) => {
+    return await Sede.create(datos);
+};
 
-const dbGetSedes = async () => {
-    return await sedesModel.find({ activa: true }).populate('creadoPor');   // Consultar todos las sedes registradas
-}
+const dbObtenerSedes = async (pagina = 1, limite = 10, filtros = {}) => {
+    const pageNumber = Math.max(1, Number(pagina) || 1);
+    const limitNumber = Math.min(100, Math.max(1, Number(limite) || 10));
+    const skip = (pageNumber - 1) * limitNumber;
+    const consulta = {};
 
-const dbDeleteSede = async ( id ) => {
-    // return await sedesModel.findByIdAndDelete( id );
-    return await sedesModel.findOneAndDelete({ _id: id });
-}
+    if (filtros.activa === 'true') consulta.activa = true;
+    if (filtros.activa === 'false') consulta.activa = false;
 
-const dbUpdateSede = async ( id, sedeUpdated ) => {
-    // return await sedesModel.findByIdAndUpdate( 
-    //     id,                 // El ID del Documento que deseamos actualizar
-    //     sedeUpdated,        // El objeto con los datos del Documento que deseamos actualizar
-    //     { new: true }       // Configuracion para que retorne el documento actualizado
-    // );
-    return await sedesModel.findOneAndUpdate(
-        { _id: id },            // Objeto de consulta para buscar el documento que deseamos actualizar
-        sedeUpdated,            // El objeto con los datos del Documento que deseamos actualizar
-        { new: true }           // Configuracion para que retorne el documento actualizado
-    );  
+    if (filtros.ciudad) {
+        consulta.ciudad = { $regex: filtros.ciudad, $options: 'i' };
+    }
 
-}
+    if (filtros.busqueda) {
+        consulta.$or = [
+            { nombre: { $regex: filtros.busqueda, $options: 'i' } },
+            { direccion: { $regex: filtros.busqueda, $options: 'i' } },
+            { ciudad: { $regex: filtros.busqueda, $options: 'i' } }
+        ];
+    }
 
-const dbGetSede = async ( id ) => {
-    // return await sedesModel.findById( id );       // Obtiene una sede por su ID
-    return await sedesModel.findOne({ _id: id });
-}
+    const [sedes, total] = await Promise.all([
+        Sede.find(consulta)
+            .sort({ nombre: 1 })
+            .skip(skip)
+            .limit(limitNumber)
+            .populate('creadoPor', 'nombre correo rol'),
+        Sede.countDocuments(consulta)
+    ]);
+
+    return {
+        sedes,
+        paginacion: {
+            pagina: pageNumber,
+            limite: limitNumber,
+            total,
+            totalPaginas: Math.ceil(total / limitNumber)
+        }
+    };
+};
+
+const dbObtenerSedePorId = async (id) => {
+    return await Sede.findById(id).populate('creadoPor', 'nombre correo rol');
+};
+
+const dbActualizarSede = async (id, datos) => {
+    return await Sede.findByIdAndUpdate(id, datos, {
+        new: true,
+        runValidators: true
+    }).populate('creadoPor', 'nombre correo rol');
+};
+
+const dbEliminarSede = async (id) => {
+    return await Sede.findByIdAndDelete(
+        id
+    )
+};
 
 export {
-    dbCreateSede,
-    dbGetSedes,
-    dbDeleteSede,
-    dbUpdateSede,
-    dbGetSede
-}
+    dbCrearSede,
+    dbObtenerSedes,
+    dbObtenerSedePorId,
+    dbActualizarSede,
+    dbEliminarSede
+};

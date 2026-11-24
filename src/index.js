@@ -13,6 +13,7 @@ import serviciosRuta from './routes/servicios.routes.js';
 import mascotasRuta from './routes/mascota.routes.js';
 
 import authRoute from './routes/auth.routes.js';
+import sedesRuta from './routes/sedes.routes.js';
 
 import citasRuta from './routes/citas.routes.js';
 
@@ -42,6 +43,7 @@ app.use( '/api/productos', productosRuta );
 app.use( '/api/servicios', serviciosRuta );
 app.use( '/api/mascotas', mascotasRuta)
 app.use( '/api/auth', authRoute );
+app.use( '/api/sedes', sedesRuta );
 
 app.use( '/api/citas', citasRuta );
 

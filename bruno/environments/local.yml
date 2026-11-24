@@ -2,10 +2,13 @@ name: local
 variables:
   - name: baseUrl
     value: http://localhost:3000
-    description: ""
   - name: token
+<<<<<<< HEAD
     value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YWZkYzNiOTMxZGUxNjg0Y2ZhNzgyYWIiLCJub21icmVzIjoiUGF1bGEgQW5kcmVhIiwiYXBlbGxpZG9zIjoiR8OzbWV6IFJ1aXoiLCJjb3JyZW8iOiJwYXVsYS5nb21lekBjb3JyZW8uY28iLCJyb2wiOiJDTElFTlRFIiwiYWN0aXZvIjp0cnVlLCJlbXBsZWFkbyI6bnVsbCwiY2xpZW50ZSI6eyJjb250YWN0b0VtZXJnZW5jaWEiOnsibm9tYnJlIjoiRXN0ZWJhbiBKaW3DqW5leiIsInRlbGVmb25vIjoiMzExOTg3NjU0MyJ9LCJfaWQiOiI2YjA1YmQ1ZGVmYzE4ZmE3Yzg4MTI1ZjAiLCJ1c3VhcmlvIjoiNmFmZGMzYjkzMWRlMTY4NGNmYTc4MmFiIiwiZGlyZWNjaW9uIjoiQ2FsbGUgNDUgIyAyMyAtIDEwLCBBcHRvIDMwNCwgU2FvY2hhIiwiY29uc2VudGltaWVudG9EYXRvcyI6dHJ1ZSwib2JzZXJ2YWNpb25lcyI6IlByb3BpZXRhcmlhIGRlIDIgZmVsaW5vcyByZXNjYXRhZG9zIiwiYWN0aXZvIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDI2LTExLTI0VDE2OjM3OjQ5LjY0NFoiLCJ1cGRhdGVkQXQiOiIyMDI2LTExLTI0VDE2OjM3OjQ5LjY0NFoiLCJfX3YiOjB9LCJuYW1lIjoiUGF1bGEgQW5kcmVhIEfDs21leiBSdWl6IiwiZW1haWwiOiJwYXVsYS5nb21lekBjb3JyZW8uY28iLCJyb2xlIjoiQ0xJRU5URSIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzk1NTM4NTQ4LCJleHAiOjE3OTU1NDIxNDh9.INA5lBVkL1DqfwOkE00qvUN_RKI9BRfXf5LtpfOkznI
     description: ""
+=======
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YWZkYzQ1YzMxZGUxNjg0Y2ZhNzgyYWMiLCJub21icmVzIjoiTWFyaWEgQW5kcmVhIiwiYXBlbGxpZG9zIjoiR8OzbWV6IFJ1aXoiLCJjb3JyZW8iOiJtYXJpYS5nb21lekBjb3JyZW8uY28iLCJyb2wiOiJBRE1JTklTVFJBRE9SIiwiYWN0aXZvIjp0cnVlLCJlbXBsZWFkbyI6bnVsbCwiY2xpZW50ZSI6bnVsbCwibmFtZSI6Ik1hcmlhIEFuZHJlYSBHw7NtZXogUnVpeiIsImVtYWlsIjoibWFyaWEuZ29tZXpAY29ycmVvLmNvIiwicm9sZSI6IkFETUlOSVNUUkFET1IiLCJzdGF0dXMiOnRydWUsImlhdCI6MTc5NTE5NjI3MywiZXhwIjoxNzk1MTk5ODczfQ.s5oCLEqAsnSvjDq4LZcabaFc6Ru93NSFMxFFc0kJJqs
+>>>>>>> 08ac6a94d750fb164016cdee573a63560420eb6f
   - name: usuarioId
     value: ""
     description: ID de Usuario
@@ -28,5 +31,9 @@ variables:
     value: ""
     description: ID de Servicio clínico
   - name: sedeId
+<<<<<<< HEAD
     value: ""
+=======
+    value: 6b0085b189bc31a00ed93eea
+>>>>>>> 08ac6a94d750fb164016cdee573a63560420eb6f
     description: ID de Sede
