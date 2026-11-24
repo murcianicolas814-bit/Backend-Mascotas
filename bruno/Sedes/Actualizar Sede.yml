@@ -15,8 +15,8 @@ http:
     type: json
     data: |-
       {
-        "nombre": "Sede Norte Actualizada",
-        "ciudad": "Bogotá",
+        "nombre": "Sede Sur Actualizada",
+        "ciudad": "Cali",
         "direccion": "Carrera 45 # 120-31",
         "telefono": "6015551235",
         "correo": "norte.actualizada@mascotas.com",
