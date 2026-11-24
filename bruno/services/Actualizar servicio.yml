@@ -13,7 +13,7 @@ http:
       value: "{{token}}"
   params:
     - name: id
-      value: ID_AQUI
+      value: 6b008bce079f637ba3f69861
       type: path
   body:
     type: json
