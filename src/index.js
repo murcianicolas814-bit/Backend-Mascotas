@@ -13,7 +13,10 @@ import serviciosRuta from './routes/servicios.routes.js';
 import mascotasRuta from './routes/mascota.routes.js';
 
 import authRoute from './routes/auth.routes.js';
+
 import citasRuta from './routes/citas.routes.js';
+
+import sedesRuta from './routes/sedes.routes.js';
 
 const port = process.env.PORT || 3001;
 
@@ -39,7 +42,11 @@ app.use( '/api/productos', productosRuta );
 app.use( '/api/servicios', serviciosRuta );
 app.use( '/api/mascotas', mascotasRuta)
 app.use( '/api/auth', authRoute );
+
 app.use( '/api/citas', citasRuta );
+
+app.use( '/api/sedes', sedesRuta );
+
 
 // Iniciar el servidor
 app.listen(port, () => {
