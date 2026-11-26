@@ -15,14 +15,14 @@ http:
     type: json
     data: |-
       {
-        "nombres": "Carolina",
-        "apellidos": "Jiménez Duarte",
+        "nombres": "Paula Andrea",
+        "apellidos": "Gómez Ruiz",
         "tipoDocumento": "CC",
         "documento": "1056789012",
-        "correo": "carolina.jimenez@correo.co",
+        "correo": "paula.gomez@correo.co",
         "telefono": "3201234567",
         "password": "Password123*",
-        "direccion": "Calle 45 # 23 - 10, Apto 302, Bogotá",
+        "direccion": "Calle 45 # 23 - 10, Apto 304, Saocha",
         "consentimientoDatos": true,
         "contactoEmergencia": {
           "nombre": "Esteban Jiménez",

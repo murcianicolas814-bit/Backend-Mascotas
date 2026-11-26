@@ -3,7 +3,8 @@ import {
     dbObtenerEmpleados,
     dbObtenerEmpleadoPorId,
     dbActualizarEmpleado,
-    dbEliminarEmpleado
+    dbEliminarEmpleado,
+    dbObtenerVeterinariosActivos
 } from '../services/empleados.services.js';
 import handleMongooseError from '../helpers/handle-mongoose-error.helper.js';
 
@@ -40,6 +41,24 @@ const obtenerEmpleados = async (req, res) => {
     } catch (error) {
         console.error('Error al obtener empleados:', error);
         res.status(500).json({ msg: 'No se pudo obtener la lista de empleados' });
+    }
+};
+
+const obtenerVeterinariosActivos = async (req, res) => {
+    try {
+        const empleados = await dbObtenerVeterinariosActivos();
+        const veterinarios = empleados
+            .filter((empleado) => empleado.usuario?.activo)
+            .map((empleado) => ({
+                _id: empleado._id,
+                nombre: `${empleado.usuario.nombres} ${empleado.usuario.apellidos}`.trim(),
+                cargo: empleado.cargo
+            }));
+
+        res.json({ ok: true, data: { veterinarios } });
+    } catch (error) {
+        console.error('Error al obtener veterinarios activos:', error);
+        res.status(500).json({ ok: false, msg: 'No se pudo obtener la lista de veterinarios' });
     }
 };
 
@@ -117,6 +136,7 @@ const eliminarEmpleado = async (req, res) => {
 export {
     crearEmpleado,
     obtenerEmpleados,
+    obtenerVeterinariosActivos,
     obtenerEmpleadoPorId,
     actualizarEmpleado,
     eliminarEmpleado

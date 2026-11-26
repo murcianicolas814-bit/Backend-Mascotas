@@ -1,5 +1,6 @@
 // const express = require('express');   // CommonJS
 import express from 'express';           // ESModule
+import cors from 'cors';
 
 import conexion from './config/mongo.config.js';  // Conexion a la base de datos
 
@@ -17,13 +18,27 @@ import sedesRuta from './routes/sedes.routes.js';
 
 import citasRuta from './routes/citas.routes.js';
 
-import sedesRuta from './routes/sedes.routes.js';
-
 const port = process.env.PORT || 3001;
 
 const app = express();      // Instancia de Express
 
 conexion();     // Ejecuta la conexion a la base de datos
+
+const allowedOrigins = ( process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:5173' )
+    .split(',')
+    .map( origin => origin.trim() )
+    .filter(Boolean);
+
+app.use(cors({
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Origen no permitido por CORS'));
+    },
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'X-Token', 'Authorization']
+}));
 
 // Habilita a la aplicacion para interpretar JSON
 app.use( express.json() );
@@ -46,9 +61,6 @@ app.use( '/api/auth', authRoute );
 app.use( '/api/sedes', sedesRuta );
 
 app.use( '/api/citas', citasRuta );
-
-app.use( '/api/sedes', sedesRuta );
-
 
 // Iniciar el servidor
 app.listen(port, () => {

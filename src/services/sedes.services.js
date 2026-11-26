@@ -29,8 +29,7 @@ const dbObtenerSedes = async (pagina = 1, limite = 10, filtros = {}) => {
         Sede.find(consulta)
             .sort({ nombre: 1 })
             .skip(skip)
-            .limit(limitNumber)
-            .populate('creadoPor', 'nombre correo rol'),
+            .limit(limitNumber),
         Sede.countDocuments(consulta)
     ]);
 

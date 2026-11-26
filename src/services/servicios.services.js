@@ -6,10 +6,9 @@ const dbCrearServicio = async ( nuevoServicio ) => {
 
 // Obtener la lista de usuarios con paginación y filtro de estado (activos, inactivos o todos)
 const dbObtenerServicios = async ( page = 1, limit = 10, status = 'true' ) => {
-    console.log(page, limit, status)
     // Paso 1: Sanitizar los valores de paginación (números enteros >= 1)
     const pageNumber = Math.max( 1, Number( page ) || 1 );
-    const limitNumber = Math.max( 1, Number( limit ) || 10 );
+    const limitNumber = Math.min( 100, Math.max( 1, Number( limit ) || 10 ) );
 
     // Paso 2: Calcular el desplazamiento o salto de registros (skip)
     // Fórmula: (página - 1) * límite
@@ -36,21 +35,27 @@ const dbObtenerServicios = async ( page = 1, limit = 10, status = 'true' ) => {
     const [ servicios, total ] = await Promise.all([
         // 4.1: Consulta los documentos aplicando el filtro, skip (saltar) y limit (cantidad máxima)
         servicioModel.find( filter )
+            .sort({ nombre: 1 })
             .skip( skip )
-            .limit( limitNumber )
-            .populate('creadoPor'),
+            .limit( limitNumber ),
 
         // 4.2: Cuenta el total de documentos que coinciden exactamente con el filtro aplicado
         servicioModel.countDocuments( filter )
     ]);
-    console.log(servicios)
     // Paso 5: Retornar los datos obtenidos junto con la metadata de paginación y filtro
     return {
-        servicios,                                        // Lista de usuarios correspondientes a la página actual
-        total,                                        // Total de usuarios que coinciden con el filtro
-        page: pageNumber,                             // Número de página consultada
-        limit: limitNumber,                           // Cantidad de registros devueltos por página
-        totalPages: Math.ceil( total / limitNumber ) // Total de páginas disponibles
+        servicios,
+        paginacion: {
+            pagina: pageNumber,
+            limite: limitNumber,
+            total,
+            totalPaginas: Math.ceil( total / limitNumber )
+        },
+        // Mantiene compatibilidad con integraciones que usan nombres actuales.
+        total,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil( total / limitNumber )
     };
 }
 

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
     crearEmpleado,
     obtenerEmpleados,
+    obtenerVeterinariosActivos,
     obtenerEmpleadoPorId,
     actualizarEmpleado,
     eliminarEmpleado
@@ -20,6 +21,12 @@ router.post('/', authorizationMiddleware([ROLES.ADMIN]), crearEmpleado);
 
 // 2. Listar empleados con filtros de rol, sede, etc. (Admin y Recepcionista)
 router.get('/', authorizationMiddleware([ROLES.ADMIN, ROLES.RECEPCIONISTA]), obtenerEmpleados);
+
+router.get(
+    '/veterinarios/activos',
+    authorizationMiddleware([ROLES.ADMIN, ROLES.RECEPCIONISTA, ROLES.CLIENTE]),
+    obtenerVeterinariosActivos
+);
 
 // 3. Obtener un empleado por ID (Admin, Recepcionista y Veterinario)
 router.get('/:id', authorizationMiddleware([ROLES.ADMIN, ROLES.RECEPCIONISTA, ROLES.VETERINARIO]), obtenerEmpleadoPorId);

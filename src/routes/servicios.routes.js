@@ -7,8 +7,8 @@ const router = Router();
 
 router.post( '/', authMiddleware, authorizationMiddleware(['ADMIN']), crearServicio );
 router.get( '/', obtenerServicios );
-router.delete( '/:id', eliminarServicio );
-router.patch( '/:id', actualizarServicio );
+router.delete( '/:id', authMiddleware, authorizationMiddleware(['ADMIN']), eliminarServicio );
+router.patch( '/:id', authMiddleware, authorizationMiddleware(['ADMIN']), actualizarServicio );
 router.get( '/:id', obtenerServicio );
 
 export default router;

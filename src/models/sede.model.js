@@ -48,7 +48,6 @@ const sedeSchema = new mongoose.Schema({
 }, { timestamps: true, collection: 'sedes' });
 
 sedeSchema.index({ ciudad: 1, activa: 1 });
-sedeSchema.index({ nombre: 1 });
 
 export default mongoose.model('Sede', sedeSchema);
 

@@ -1,4 +1,5 @@
 import { dbCrearServicio, dbObtenerServicios, dbEliminarServicio, dbActualizarServicio, dbObtenerServicio } from '../services/servicios.services.js'
+import handleMongooseError from '../helpers/handle-mongoose-error.helper.js'
 
 const crearServicio = async (req, res) => {
     try {
@@ -10,22 +11,12 @@ const crearServicio = async (req, res) => {
 
         const data = await dbCrearServicio(datosDeEntrada);
 
-        res.json({ msg: 'Registra servicio', data: data});
+        res.status(201).json({ msg: 'Servicio registrado con éxito', data });
     } catch (error) {
         console.error(error);
-
-         if( error.name == 'ValidationError' ) {
-            const errors = {};
-
-            // Iterar los errores para extraer el nombre de la propiedad y el error especifico
-            for( const field in error.errors ) {
-                errors[field] = error.errors[field].message;
-            }
-
-            res.json({ errors });   // Retorna un error especifico de campo
-        }
-
-        res.json({ msg: 'No se pudo registrar el producto' });
+        const mongooseError = handleMongooseError(error);
+        if (mongooseError) return res.status(400).json(mongooseError);
+        res.status(500).json({ msg: 'No se pudo registrar el servicio' });
     }
 }
 
@@ -45,14 +36,14 @@ const obtenerServicios = async (req, res) => {
         const data = await dbObtenerServicios(pagina, limite, estado);
 
         res.json({
-            msg: 'Listar servicios',
+            msg: 'Lista de servicios obtenida con éxito',
             data: data
         });
         
     } catch (error) {
         console.error(error);
 
-        res.json({
+        res.status(500).json({
             msg:'No se pudo obtener los servicios'
         });
         
@@ -64,17 +55,19 @@ const eliminarServicio = async (req, res) => {
         const id = req.params.id;
         const data = await dbEliminarServicio(id);
 
+        if (!data) return res.status(404).json({ msg: 'Servicio no encontrado para eliminar' });
+
         res.json({
-            msg: 'Eliminar servicio',
+            msg: 'Servicio eliminado con éxito',
             data: data
         });
 
     } catch (error) {
         console.error(error);
 
-        res.json({
-            msg: 'No se pudo eliminar el servicio'
-        });
+        const mongooseError = handleMongooseError(error);
+        if (mongooseError) return res.status(400).json(mongooseError);
+        res.status(500).json({ msg: 'No se pudo eliminar el servicio' });
         
     }
 }
@@ -86,17 +79,19 @@ const actualizarServicio = async (req, res) => {
 
         const data = await dbActualizarServicio( id, datosDeEntrada );
 
+        if (!data) return res.status(404).json({ msg: 'Servicio no encontrado para actualizar' });
+
         res.json({
-            msg: 'Servicio Actualizado',
+            msg: 'Servicio actualizado con éxito',
             data: data
         });
 
     } catch (error) {
         console.error(error);
 
-        res.json({
-            msg: 'No se pudo actualizar el servicio'
-        });
+        const mongooseError = handleMongooseError(error);
+        if (mongooseError) return res.status(400).json(mongooseError);
+        res.status(500).json({ msg: 'No se pudo actualizar el servicio' });
     }
 }
 
@@ -105,24 +100,19 @@ const obtenerServicio = async (req, res) => {
         const id = req.params.id
         const data = await dbObtenerServicio( id );
 
+        if (!data) return res.status(404).json({ msg: 'Servicio no encontrado' });
+
         res.json({
-            msg: 'Obtiene un servicio',
+            msg: 'Servicio obtenido con éxito',
             data: data
         });
 
     } catch (error) {
         console.error(error);
 
-         if( error.name === 'CastError' ) {
-            return res.status(400).json({
-                msg: 'Error en el formato del ID',
-                [error.path]: `El identificador ${ error.value } no tiene el formato valido que requiere MongoDB`
-            });
-        }
-        
-        res.json({
-            msg: 'No se pudo obtener el servicio por ID'
-        });
+        const mongooseError = handleMongooseError(error);
+        if (mongooseError) return res.status(400).json(mongooseError);
+        res.status(500).json({ msg: 'No se pudo obtener el servicio por ID' });
     }
 }
 
