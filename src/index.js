@@ -24,7 +24,7 @@ const app = express();      // Instancia de Express
 
 conexion();     // Ejecuta la conexion a la base de datos
 
-const allowedOrigins = ( process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:5173' )
+const allowedOrigins = ( process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173' )
     .split(',')
     .map( origin => origin.trim() )
     .filter(Boolean);
@@ -34,7 +34,7 @@ app.use(cors({
         if (!origin || allowedOrigins.includes(origin)) {
             return callback(null, true);
         }
-        return callback(new Error('Origen no permitido por CORS'));
+        return callback(null, false);
     },
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'X-Token', 'Authorization']
